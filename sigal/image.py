@@ -50,6 +50,31 @@ from . import compat, signals, utils
 from .settings import get_thumb, Status
 
 
+def get_date(path):
+    import subprocess
+    import json
+    import datetime
+    proc = subprocess.Popen(
+        [
+            'exiftool',
+            '-j',
+            path
+        ], stdout=subprocess.PIPE
+    )
+    out, err = proc.communicate()
+    data = json.loads(out)
+    exif_data = data[0]
+    date_created = exif_data['DateTimeOriginal']
+    if exif_data['Model'] == 'HDR-PJ810E':
+        date_created = date_created.split('+')[0]
+
+    parsed_date = datetime.datetime.strptime(date_created, '%Y:%m:%d %H:%M:%S')
+
+    if exif_data['Model'] == 'HDR-PJ810E':
+        parsed_date += datetime.timedelta(-1, 82348)
+    return parsed_date
+
+
 def _has_exif_tags(img):
     return hasattr(img, 'info') and 'exif' in img.info
 

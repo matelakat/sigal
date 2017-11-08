@@ -42,7 +42,7 @@ from os.path import isfile, join, splitext
 
 from . import image, video, signals
 from .compat import PY2, UnicodeMixin, strxfrm, url_quote, text_type, pickle
-from .image import process_image, get_exif_tags, get_exif_data, get_size
+from .image import process_image, get_exif_tags, get_exif_data, get_size, get_date
 from .settings import get_thumb
 from .utils import (Devnull, copy, check_or_create_dir, url_from_path,
                     read_markdown, cached_property, is_valid_html5_video,
@@ -147,15 +147,15 @@ class Media(UnicodeMixin):
         stat = os.stat(self.src_path)
         return datetime.fromtimestamp(stat.st_mtime)
 
+    @property
+    def date(self):
+        return get_date(self.src_path)
+
 
 class Image(Media):
     """Gather all informations on an image file."""
 
     type = 'image'
-
-    @cached_property
-    def date(self):
-        return self.exif and self.exif.get('dateobj', None) or self._get_file_date()
 
     @cached_property
     def exif(self):
@@ -192,7 +192,6 @@ class Video(Media):
         super(Video, self).__init__(filename, path, settings)
         base, ext = splitext(filename)
         self.src_filename = filename
-        self.date = self._get_file_date()
         if not settings['use_orig'] or not is_valid_html5_video(ext):
             video_format = settings['video_format']
             ext = '.' + video_format
