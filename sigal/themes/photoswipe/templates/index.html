@@ -370,6 +370,11 @@
 	            options.showAnimationDuration = 0;
 	        }
 
+            // Disable Sharing (people can only download photos)
+            options.shareButtons = [
+                {id:'download', label:'Download image', url:'{{raw_image_url}}', download:true}
+            ]
+
 	        // Pass data to PhotoSwipe and initialize it
 	        gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
 	        gallery.init();
