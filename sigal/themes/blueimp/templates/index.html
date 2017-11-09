@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="{{ settings.html_language }}">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>{{ album.title }}</title>
+    <meta name="description" content="">
+    <meta name="author" content="{{ album.author }}">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="{{ theme.url }}/css/blueimp-gallery.min.css">
+    {% endblock %}
+    {% include 'analytics.html' %}
+  </head>
+  <body>
+    <!-- The Gallery as lightbox dialog, should be a child element of the document body -->
+    <div id="blueimp-gallery" class="blueimp-gallery">
+      <div class="slides"></div>
+      <h3 class="title"></h3>
+      <a class="prev">‹</a>
+      <a class="next">›</a>
+      <a class="close">×</a>
+      <a class="play-pause"></a>
+      <ol class="indicator"></ol>
+    </div>
+
+    {% if album.medias %}
+    {% endif %}
+    <div id="links">
+      {% for media in album.medias %}
+      {% if media.type == "image" %}
+      <a href="{{ media.filename }}" title="{{ media.filename }}" type="image/jpeg">
+        <img src="{{ media.thumbnail }}">
+      </a>
+      {% endif %}
+
+      {% if media.type == "video" %}
+      <a href="{{ media.filename }}" title="{{ media.filename }}" type="video/webm" data-poster="{{ media.thumbnail }}">
+        <img src="{{ media.thumbnail }}">
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    <script src="{{ theme.url }}/js/blueimp-gallery.min.js"></script>
+
+  <script>
+document.getElementById('links').onclick = function (event) {
+  event = event || window.event;
+  var target = event.target || event.srcElement,
+    link = target.src ? target.parentNode : target,
+    options = {index: link, event: event},
+    links = this.getElementsByTagName('a');
+  blueimp.Gallery(links, options);
+};
+  </script>
+  </body>
+</html>
